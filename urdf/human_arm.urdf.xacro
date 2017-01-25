@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Kinematics Model -->
+  <property name="pi" value="3.14159265" />
+  <property name="link_radius" value="0.05" />
+  
+  <property name="arm_length" value="0.298" />
+  <property name="forearm_length" value="0.331" />
+  <property name="hand_length" value="0.086" />
+
+  <property name="arm_mass" value="2.5" />
+  <property name="forearm_mass" value="1.45" />
+  <property name="hand_mass" value="0.530" />
+
+  <property name="shoulder_q1_lower_lim" value="${0*pi/180.0}" />
+  <property name="shoulder_q1_upper_lim" value="${145*pi/180.0}" />
+
+  <property name="shoulder_q2_lower_lim" value="${-70*pi/180.0}" />
+  <property name="shoulder_q2_upper_lim" value="${90*pi/180.0}" />
+  
+  <property name="shoulder_q3_lower_lim" value="${-20*pi/180.0}" />
+  <property name="shoulder_q3_upper_lim" value="${20*pi/180.0}" />
+
+  <property name="elbow_q4_lower_lim" value="${-145*pi/180.0}" />
+  <property name="elbow_q4_upper_lim" value="${0*pi/180.0}" />
+
+  <property name="elbow_q5_lower_lim" value="${-10*pi/180.0}" />
+  <property name="elbow_q5_upper_lim" value="${180*pi/180.0}" />
+
+  <property name="wrist_q6_lower_lim" value="${-5*pi/180.0}" />
+  <property name="wrist_q6_upper_lim" value="${20*pi/180.0}" />
+  
+  <property name="wrist_q7_lower_lim" value="${-45*pi/180.0}" />
+  <property name="wrist_q7_upper_lim" value="${45*pi/180.0}" />
+
+  
+  <!-- Cylinder -->
+  <xacro:macro name="cylinder_inertial" params="radius length mass *origin">
+    <inertial>
+      <mass value="${mass}" />
+      <insert_block name="origin" />
+      <inertia ixx="${0.08333*mass*(3*radius*radius + length*length)}" ixy="0.0" ixz="0.0" iyy="${0.08333*mass*(3*radius*radius+length*length)}" iyz="0.0" izz="${0.5*mass*radius*radius}" />
+    </inertial>
+  </xacro:macro>
+
+  <!-- ************ -->
+  <!-- ROBOT PER SE -->
+  <!-- ************ -->
+
+  <xacro:macro name="human_arm" params="prefix">
+
+  <link name="${prefix}base_link" />
+
+  <!-- ARM -->
+  <link name="${prefix}arm_link">
+    <visual>
+      <geometry>
+        <cylinder length="${arm_length}" radius="${link_radius}" />
+      </geometry>
+      <origin xyz="0 0 ${-arm_length/2}" rpy="0 0 0" />
+      <material name="LightPink">
+        <color rgba="0.96 0.5 0.5 1.0" />
+      </material>
+    </visual>	
+    <collision>
+      <geometry>
+        <cylinder length="${arm_length}" radius="${link_radius}"/>
+      </geometry>
+      <origin xyz="0 0 ${-arm_length/2}" rpy="0 0 0" />
+    </collision>			
+    <xacro:cylinder_inertial radius="${link_radius}" length="${arm_length}" mass="${arm_mass}">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+    </xacro:cylinder_inertial>    
+  </link>       
+
+  <link name="${prefix}shoulder_link_virtual_1" />
+  <link name="${prefix}shoulder_link_virtual_2" />
+
+  <joint name="${prefix}shoulder_q1_joint" type="revolute">
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}shoulder_link_virtual_1"/>
+    <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+    <axis xyz="1 0 0" />
+    <limit lower="${shoulder_q1_lower_lim}" upper="${shoulder_q1_upper_lim}" effort="330" velocity="2.16" />
+    <dynamics damping="0.0" friction="0.0"/>	 
+  </joint>
+
+  <joint name="${prefix}shoulder_q2_joint" type="revolute">
+    <parent link="${prefix}shoulder_link_virtual_1"/>
+    <child link="${prefix}shoulder_link_virtual_2"/>
+    <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+    <axis xyz="0 1 0" />
+    <limit lower="${shoulder_q2_lower_lim}" upper="${shoulder_q2_upper_lim}" effort="330" velocity="2.16" />
+    <dynamics damping="0.0" friction="0.0"/>	 
+  </joint>
+
+  <joint name="${prefix}shoulder_q3_joint" type="revolute">
+    <parent link="${prefix}shoulder_link_virtual_2"/>
+    <child link="${prefix}arm_link"/>
+    <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+    <axis xyz="0 0 1" />
+    <limit lower="${shoulder_q3_lower_lim}" upper="${shoulder_q3_upper_lim}" effort="330" velocity="2.16" />
+    <dynamics damping="0.0" friction="0.0"/>	 
+  </joint>
+
+
+  <!-- FOREARM -->
+  <link name="${prefix}forearm_link">
+    <visual>
+      <geometry>
+        <cylinder length="${forearm_length}" radius="${link_radius}" />
+      </geometry>
+      <origin xyz="0 0 ${-forearm_length/2}" rpy="0 0 0" /> 
+      <material name="LightPink">
+        <color rgba="0.96 0.5 0.5 1.0" />
+      </material>
+    </visual>	
+    <collision>
+      <geometry>
+        <cylinder length="${forearm_length}" radius="${link_radius}" />
+      </geometry>
+      <origin xyz="0 0 ${-forearm_length/2}" rpy="0 0 0" />
+    </collision>			
+    <xacro:cylinder_inertial radius="${link_radius}" length="${forearm_length}" mass="${forearm_mass}">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+    </xacro:cylinder_inertial>    
+  </link>       
+
+  <link name="${prefix}forearm_link_virtual_1" />
+
+  <joint name="${prefix}elbow_q4_joint" type="revolute">
+    <parent link="${prefix}arm_link"/>
+    <child link="${prefix}forearm_link_virtual_1"/>
+    <origin xyz="0 0 ${-arm_length}" rpy="0.0 0.0 0.0" />
+    <axis xyz="0 1 0" />
+    <limit lower="${elbow_q4_lower_lim}" upper="${elbow_q4_upper_lim}" effort="330" velocity="2.16" />
+    <dynamics damping="0.0" friction="0.0"/>	 
+  </joint>
+
+  <joint name="${prefix}elbow_q5_joint" type="revolute">
+    <parent link="${prefix}forearm_link_virtual_1"/>
+    <child link="${prefix}forearm_link"/>
+    <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+    <axis xyz="0 0 1" />
+    <limit lower="${elbow_q5_lower_lim}" upper="${elbow_q5_upper_lim}" effort="330" velocity="2.16" />
+    <dynamics damping="0.0" friction="0.0"/>	 
+  </joint>
+
+
+  <!-- HAND -->
+  <link name="${prefix}hand_link">
+    <visual>
+      <geometry>
+        <cylinder length="${hand_length}" radius="${link_radius}" />
+      </geometry>
+      <origin xyz="0 0 ${-hand_length/2}" rpy="0 0 0" />
+      <material name="LightPink">
+        <color rgba="0.96 0.5 0.5 1.0" />
+      </material>
+    </visual>	
+    <collision>
+      <geometry>
+        <cylinder length="${hand_length}" radius="${link_radius}" />
+      </geometry>
+      <origin xyz="0 0 ${-hand_length/2}" rpy="0 0 0" />
+    </collision>			
+    <xacro:cylinder_inertial radius="${link_radius}" length="${hand_length}" mass="${hand_mass}">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+    </xacro:cylinder_inertial>    
+  </link>       
+
+  <link name="${prefix}hand_link_virtual_1" />
+
+  <joint name="${prefix}wrist_q6_joint" type="revolute">
+    <parent link="${prefix}forearm_link"/>
+    <child link="${prefix}hand_link_virtual_1"/>
+    <origin xyz="0 0 ${-forearm_length}" rpy="0.0 0.0 0.0" />
+    <axis xyz="1 0 0" />
+    <limit lower="${wrist_q6_lower_lim}" upper="${wrist_q6_upper_lim}" effort="330" velocity="2.16" />
+    <dynamics damping="0.0" friction="0.0"/>	 
+  </joint>
+
+  <joint name="${prefix}wrist_q7_joint" type="revolute">
+    <parent link="${prefix}hand_link_virtual_1"/>
+    <child link="${prefix}hand_link"/>
+    <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+    <axis xyz="0 1 0" />
+    <limit lower="${wrist_q7_lower_lim}" upper="${wrist_q7_upper_lim}" effort="330" velocity="2.16" />
+    <dynamics damping="0.0" friction="0.0"/>	 
+  </joint>
+
+  </xacro:macro>
+
+</robot>

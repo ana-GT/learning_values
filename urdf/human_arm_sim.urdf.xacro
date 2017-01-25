@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="ur10" >
+
+  <!-- common stuff -->
+<!--  <xacro:include filename="$(find learning_values)/urdf/common.gazebo.xacro" /> -->
+
+  <!-- arm -->
+  <xacro:include filename="human_arm.urdf.xacro" />
+
+  <!-- arm -->
+  <xacro:human_arm prefix=""/>
+
+  <link name="world" />
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "base_link" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+  </joint>
+
+</robot>

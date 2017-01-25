@@ -1,0 +1,18 @@
+<launch>
+
+<!-- Load Schunk -->
+<param name="schunk_description" command="$(find xacro)/xacro '$(find learning_values)/urdf/schunk_arm_urdf.xacro'" />
+<node pkg="tf" type="static_transform_publisher" name="schunk_bc" args="0 0 0 0 0 0 1 /world /base_link 100" />
+
+<node name="robot_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+  <remap from="robot_description" to="schunk_description" />
+  <remap from="joint_states" to="/schunk/joint_states" />
+</node>
+	
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+  <remap from="robot_description" to="schunk_description" />
+  <remap from="joint_states" to="/schunk/analyze_joint_states" /> <!-- "/schunk/analyze_joint_states" /> -->
+</node>
+
+
+</launch>
