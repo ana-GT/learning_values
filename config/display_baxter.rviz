@@ -131,6 +131,11 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        left_hand_ee:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         left_hand_range:
           Alpha: 1
           Show Axes: false
@@ -227,6 +232,11 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        right_hand_ee:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         right_hand_range:
           Alpha: 1
           Show Axes: false
@@ -337,6 +347,8 @@ Visualization Manager:
           Value: false
         left_hand_camera_axis:
           Value: false
+        left_hand_ee:
+          Value: true
         left_hand_range:
           Value: false
         left_lower_elbow:
@@ -370,12 +382,14 @@ Visualization Manager:
         right_gripper_base:
           Value: false
         right_hand:
-          Value: true
+          Value: false
         right_hand_accelerometer:
           Value: false
         right_hand_camera:
           Value: false
         right_hand_camera_axis:
+          Value: false
+        right_hand_ee:
           Value: false
         right_hand_range:
           Value: false
@@ -450,6 +464,8 @@ Visualization Manager:
                                   {}
                                 left_hand_range:
                                   {}
+                              left_hand_ee:
+                                {}
                         left_upper_forearm_visual:
                           {}
                     left_upper_elbow_visual:
@@ -478,6 +494,8 @@ Visualization Manager:
                                   {}
                                 right_hand_camera_axis:
                                   {}
+                                right_hand_ee:
+                                  {}
                                 right_hand_range:
                                   {}
                         right_upper_forearm_visual:
@@ -492,10 +510,10 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /ballToCatch
+      Marker Topic: /target_marker
       Name: Marker
       Namespaces:
-        {}
+        "": true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -536,10 +554,10 @@ Visualization Manager:
       Focal Shape Size: 0.05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.309796
+      Pitch: 0.0747966
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 6.03673
+      Yaw: 5.47175
     Saved: ~
 Window Geometry:
   Displays:

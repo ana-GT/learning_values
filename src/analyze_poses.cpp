@@ -53,7 +53,7 @@ void AnalyzePoses::fill_robot_info() {
     robot_info[ri].num_joints[l] = nj;
     robot_info[ri].joint_names[l].resize(nj);
     robot_info[ri].base_link[l] = side + "_arm_base_link";
-    robot_info[ri].tip_link[l] = side + "_arm_ee_link";
+    robot_info[ri].tip_link[l] = side + "_sdh_grasp_link";
     robot_info[ri].shoulder_link[l] = side + "_arm_base_link";
 
     for( int i = 0; i < nj; ++i ) { char n[3];
@@ -64,7 +64,7 @@ void AnalyzePoses::fill_robot_info() {
     
   // Left
   robot_info[ri].q_comf[0].resize( nj );
-  q_def << 30, 45, 0, 45, 0, 0, 0; q_def *= (3.1416/180.0);
+  q_def << -30, -45, 30, -90, -30, -60, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[0].data = q_def;
 
   robot_info[ri].xyz_world_min[0] << 0.05, 0.05, 0.50;
@@ -72,7 +72,7 @@ void AnalyzePoses::fill_robot_info() {
 
   // Right
   robot_info[ri].q_comf[1].resize( nj );
-  q_def << -30, -45, 0, -45, 0, 0, 0; q_def *= (3.1416/180.0);
+  q_def << -30, -45, 30, -90, -30, -60, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[1].data = q_def;
   
   robot_info[ri].xyz_world_min[1] << 0.05, -0.55, 0.50;
@@ -104,7 +104,7 @@ void AnalyzePoses::fill_robot_info() {
 
   // Left
   robot_info[ri].q_comf[0].resize( nj );
-  q_def << 45, -45, 0, -45, 0, 45, 0; q_def *= (3.1416/180.0);
+  q_def << 45, -45, 0, -45, 0, 0, -45; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[0].data = q_def;
 
   robot_info[ri].xyz_world_min[0] << 0.05, 0.05, 0.00;
@@ -112,7 +112,7 @@ void AnalyzePoses::fill_robot_info() {
 
   // Right
   robot_info[ri].q_comf[1].resize( nj );
-  q_def << 60,0,0,90,0,20,30; q_def *= (3.1416/180.0);
+  q_def << 45, 45,0, 45,0,0,45; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[1].data = q_def;
 
   robot_info[ri].xyz_world_min[1] << 0.05, -0.70, 0.00;
@@ -133,7 +133,7 @@ void AnalyzePoses::fill_robot_info() {
     robot_info[ri].joint_names[l].resize(nj);
     std::string side; if( l == 0 ) { side = "left"; } else { side="right"; }
     robot_info[ri].base_link[l] = side + "_arm_mount";
-    robot_info[ri].tip_link[l] = side + "_hand";  
+    robot_info[ri].tip_link[l] = side + "_hand_ee"; // Used to be hand_ee  
     robot_info[ri].shoulder_link[l] = side + "_upper_elbow";
     
     for( int i = 0; i < nj; ++i ) {
@@ -143,7 +143,7 @@ void AnalyzePoses::fill_robot_info() {
 
   // Left
   robot_info[ri].q_comf[0].resize( nj );
-  q_def << 0, 45, -45, 90, 0, 30, 0; q_def *= (3.1416/180.0);
+  q_def << 0, 45, -90, 90, 45, 45, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[0].data = q_def;
 
   robot_info[ri].xyz_world_min[0] << 0.15, 0.45, 0.00;
@@ -151,7 +151,7 @@ void AnalyzePoses::fill_robot_info() {
 
   // Right
   robot_info[ri].q_comf[1].resize( nj );
-  q_def << 0, 45, -45, 90, 0 ,30, 0; q_def *= (3.1416/180.0);
+  q_def << 0, 45, 90, 90, -45 , 45, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[1].data = q_def;
 
   robot_info[ri].xyz_world_min[1] << 0.15, -0.90, 0.00;
@@ -398,7 +398,7 @@ bool AnalyzePoses::generate_best_worst_voxel( double _dv,
        rc = ik_solver->CartToJnt( q_comf, fi, qi, tol );
        if( rc < 0 ) { ns++; continue; }
        else {
-	 _best.push_back( qi.data );
+	 _best.push_back(qi.data); //( qi.data );
 	 _worst.push_back( qi.data );
 	 geometry_msgs::Point p;
 	 p.x = P_world_target(0); p.y = P_world_target(1); p.z = P_world_target(2);

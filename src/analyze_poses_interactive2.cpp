@@ -67,7 +67,7 @@ int main( int argc, char* argv[] ) {
   
   std::vector<Eigen::VectorXd> worst, best;
   std::vector<geometry_msgs::Point> target_world;
-  ap.generate_best_worst_voxel( 0.05,
+  ap.generate_best_worst_voxel( 0.10,
 				best, worst,
 				target_world );
 
