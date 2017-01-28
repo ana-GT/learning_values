@@ -9,6 +9,7 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
+#include <tf_conversions/tf_kdl.h>
 
 void print_Tf( tf::Transform _Tf ) {
   tf::Vector3 rx, ry, rz, p;
@@ -52,7 +53,7 @@ void AnalyzePoses::fill_robot_info() {
     
     robot_info[ri].num_joints[l] = nj;
     robot_info[ri].joint_names[l].resize(nj);
-    robot_info[ri].base_link[l] = side + "_arm_base_link";
+    robot_info[ri].base_link[l] = "mid_link"; //side + "_arm_base_link";
     robot_info[ri].tip_link[l] = side + "_sdh_grasp_link";
     robot_info[ri].shoulder_link[l] = side + "_arm_base_link";
 
@@ -67,16 +68,16 @@ void AnalyzePoses::fill_robot_info() {
   q_def << -30, -45, 30, -90, -30, -60, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[0].data = q_def;
 
-  robot_info[ri].xyz_world_min[0] << 0.05, 0.05, 0.50;
-  robot_info[ri].xyz_world_max[0] << 0.55, 0.55, 1.60;
+  robot_info[ri].xyz_base_min[0] << 0.05, 0.05, -0.50;
+  robot_info[ri].xyz_base_max[0] << 0.55, 0.55, 0.60;
 
   // Right
   robot_info[ri].q_comf[1].resize( nj );
   q_def << -30, -45, 30, -90, -30, -60, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[1].data = q_def;
   
-  robot_info[ri].xyz_world_min[1] << 0.05, -0.55, 0.50;
-  robot_info[ri].xyz_world_max[1] << 0.55, -0.05, 1.60;
+  robot_info[ri].xyz_base_min[1] << 0.05, -0.55, -0.50;
+  robot_info[ri].xyz_base_max[1] << 0.55, -0.05, 1.60;
 
   
   //***********************
@@ -93,7 +94,7 @@ void AnalyzePoses::fill_robot_info() {
     robot_info[ri].num_joints[l] = nj;
     robot_info[ri].joint_names[l].resize(nj);
     std::string side; if( l == 0 ) { side = "left"; } else { side="right"; }
-    robot_info[ri].base_link[l] = "human/" + side + "_arm_mount";
+    robot_info[ri].base_link[l] = "human/spine"; //"human/" + side + "_arm_mount";
     robot_info[ri].tip_link[l] = "human/" + side + "_hand";  
     robot_info[ri].shoulder_link[l] = "human/" + side + "_shoulder_0";
     
@@ -107,16 +108,16 @@ void AnalyzePoses::fill_robot_info() {
   q_def << 45, -45, 0, -45, 0, 0, -45; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[0].data = q_def;
 
-  robot_info[ri].xyz_world_min[0] << 0.05, 0.05, 0.00;
-  robot_info[ri].xyz_world_max[0] << 0.55, 0.70, 0.80;
+  robot_info[ri].xyz_base_min[0] << 0.05, 0.05, -0.20;
+  robot_info[ri].xyz_base_max[0] << 0.80, 0.80, 0.80;
 
   // Right
   robot_info[ri].q_comf[1].resize( nj );
   q_def << 45, 45,0, 45,0,0,45; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[1].data = q_def;
 
-  robot_info[ri].xyz_world_min[1] << 0.05, -0.70, 0.00;
-  robot_info[ri].xyz_world_max[1] << 0.55, -0.05, 0.80;
+  robot_info[ri].xyz_base_min[1] << 0.05, -0.80, -0.20;
+  robot_info[ri].xyz_base_max[1] << 0.80, -0.05, 0.80;
 
   //***********************
   // Baxter
@@ -132,8 +133,8 @@ void AnalyzePoses::fill_robot_info() {
     robot_info[ri].num_joints[l] = nj;
     robot_info[ri].joint_names[l].resize(nj);
     std::string side; if( l == 0 ) { side = "left"; } else { side="right"; }
-    robot_info[ri].base_link[l] = side + "_arm_mount";
-    robot_info[ri].tip_link[l] = side + "_hand_ee"; // Used to be hand_ee  
+    robot_info[ri].base_link[l] = "torso"; //side + "_arm_mount";
+    robot_info[ri].tip_link[l] = side + "_gripper"; // Used to be hand_ee  
     robot_info[ri].shoulder_link[l] = side + "_upper_elbow";
     
     for( int i = 0; i < nj; ++i ) {
@@ -146,16 +147,16 @@ void AnalyzePoses::fill_robot_info() {
   q_def << 0, 45, -90, 90, 45, 45, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[0].data = q_def;
 
-  robot_info[ri].xyz_world_min[0] << 0.15, 0.45, 0.00;
-  robot_info[ri].xyz_world_max[0] << 0.70, 0.90, 0.60;
+  robot_info[ri].xyz_base_min[0] << 0.15, 0.05, 0.00;
+  robot_info[ri].xyz_base_max[0] << 1.00, 0.90, 0.90;
 
   // Right
   robot_info[ri].q_comf[1].resize( nj );
   q_def << 0, 45, 90, 90, -45 , 45, 0; q_def *= (3.1416/180.0);
   robot_info[ri].q_comf[1].data = q_def;
 
-  robot_info[ri].xyz_world_min[1] << 0.15, -0.90, 0.00;
-  robot_info[ri].xyz_world_max[1] << 0.70, -0.45, 0.60;
+  robot_info[ri].xyz_base_min[1] << 0.15, -0.90, 0.00;
+  robot_info[ri].xyz_base_max[1] << 1.00, -0.05, 0.90;
   
 }
 
@@ -191,11 +192,11 @@ void AnalyzePoses::stop() {
 void AnalyzePoses::tfListener() {
   
   tf::TransformListener listener;
-  double frequency = 40.0; // Hz
+  double frequency = 100.0; // Hz
   ros::Rate tf_rate( frequency );
 
-       listener.waitForTransform( world_frame,
-	     	                   base_frame, ros::Time(), ros::Duration(0.05) );
+  listener.waitForTransform( world_frame,
+			     base_frame, ros::Time(), ros::Duration(0.05) );
 
   while( ros::ok() && run == true ) {
 
@@ -208,21 +209,7 @@ void AnalyzePoses::tfListener() {
       } catch ( tf::TransformException ex ) {
 	ROS_ERROR( "Error when listening transform %s", ex.what() );
       }
-      try {
 
-	listener.lookupTransform( base_frame,
-				     world_frame, ros::Time(),
-				     this->Tf_base_world );
-      } catch ( tf::TransformException ex ) {
-	ROS_ERROR( "Error when listening transform %s", ex.what() );
-      }
-      try {
-	listener.lookupTransform( world_frame,
-				  shoulder_frame, ros::Time(),
-				  this->Tf_world_shoulder );
-      } catch ( tf::TransformException ex ) {
-	ROS_ERROR( "Error when listening transform %s", ex.what() );
-      }
       try {
 	listener.lookupTransform( base_frame,
 				  shoulder_frame, ros::Time(),
@@ -231,15 +218,13 @@ void AnalyzePoses::tfListener() {
 	ROS_ERROR( "Error when listening transform %s", ex.what() );
       }
 
-      try { listener.lookupTransform( shoulder_frame,
-				      base_frame, ros::Time(),
-				      this->Tf_shoulder_base );
-      } catch ( tf::TransformException ex ) {
-	ROS_ERROR( "Error when listening transform %s", ex.what() );
-      }
-      
+
+      this->Tf_base_world.setData( this->Tf_world_base.inverse() );
+      this->Tf_world_shoulder.setData(  this->Tf_world_base * this->Tf_base_shoulder );
+      this->Tf_shoulder_base.setData( this->Tf_base_shoulder.inverse() );
+
     } // end if    
-    else { printf("Size is less than 4: %d \n", world_frame.size() ); }
+
     tf_rate.sleep();
   } // while end
 //  printf("GOT OUT\n");
@@ -269,8 +254,8 @@ bool AnalyzePoses::setChain( bool _left,
   this->shoulder_frame = robot_info[_robot_type].shoulder_link[index];
   this->tip_frame = robot_info[_robot_type].tip_link[index];
 
-  this->xyz_world_min = robot_info[_robot_type].xyz_world_min[index];
-  this->xyz_world_max = robot_info[_robot_type].xyz_world_max[index];
+  this->xyz_base_min = robot_info[_robot_type].xyz_base_min[index];
+  this->xyz_base_max = robot_info[_robot_type].xyz_base_max[index];
   
   double timeout_in_secs = 0.005;
   double error=1e-5; 
@@ -352,6 +337,151 @@ bool AnalyzePoses::generate_sets_manip( int _N,
   return true;
 }
 
+/**
+ * @function generate_reachable_voxels
+ */
+void AnalyzePoses::generate_reachable_voxels( double _dv,
+					      std::vector<Eigen::VectorXd> &_qs,
+					      std::vector<geometry_msgs::Point> &_P_world,
+					      bool _use_lim,
+					      tf::Transform _Tf_world_c,
+					      Eigen::Vector3d _xyz_c_min,
+					      Eigen::Vector3d _xyz_c_max ) {
+
+  _qs.resize(0);
+  _P_world.resize(0);
+  
+  int rc; KDL::JntArray qi;
+  
+  KDL::Twist tol;
+  tol.rot = KDL::Vector(0.5,0.5,0.5);
+  tol.vel = KDL::Vector(0.005, 0.005, 0.005 );
+  
+  // Generate 3D positions to check
+  Eigen::Vector3d P_bt;
+  std::vector<Eigen::Vector3d> P_base_targets;
+  std::vector<geometry_msgs::Point> P_world_targets;
+  std::vector<KDL::Frame> Tf_base_target_guess;
+  geometry_msgs::Point p;
+  tf::Vector3 p_wt, p_ct;
+  
+  int ns = 0;
+  int i, j, k;
+  printf("Tf_world base human:  \n" );
+  print_Tf( _Tf_world_c );
+
+  printf("Tf_world base robot:\n" );
+  print_Tf( this->Tf_world_base );
+
+  
+  tf::Transform Tcw; Tcw = _Tf_world_c.inverse();
+  for( i = 0; i < (int)((xyz_base_max(0)-xyz_base_min(0))/_dv); ++i ) {
+    for( j = 0; j < (int)((xyz_base_max(1)-xyz_base_min(1))/_dv); ++j ) {
+      for( k = 0; k < (int)((xyz_base_max(2)-xyz_base_min(2))/_dv); ++k ) {	
+	// Generate suggestions
+	ros::spinOnce();
+	P_bt << this->xyz_base_min + Eigen::Vector3d( _dv*i, _dv*j, _dv*k );
+	// See if it is in limit argument
+	// 1. Put in world frame
+	p_wt = this->Tf_world_base * tf::Vector3(P_bt(0), P_bt(1), P_bt(2) );
+	// Put it in base reference frame
+	p_ct = Tcw * p_wt;
+	
+	// If within limits, store it
+	if( p_ct.getX() > _xyz_c_min(0) && p_ct.getX() < _xyz_c_max(0) &&
+	    p_ct.getY() > _xyz_c_min(1) && p_ct.getY() < _xyz_c_max(1) &&
+	    p_ct.getZ() > _xyz_c_min(2) && p_ct.getZ() < _xyz_c_max(2) ) {
+	  p.x = p_wt.getX(); p.y = p_wt.getY(); p.z = p_wt.getZ();
+	  P_world_targets.push_back( p );
+	  P_base_targets.push_back( P_bt );
+	}
+      }  // for k
+    }  // for j
+  } // for i
+
+  // Try them out
+  for( int i = 0; i < P_base_targets.size(); ++i ) {
+    
+    ros::spinOnce();	
+    this->getGuess( P_base_targets[i],
+		    Tf_base_target_guess );
+	
+    double m_min = 1000; double m_max = 0; double m;
+    KDL::JntArray q_m_min, q_m_max;
+    
+    for( int l = 0; l < Tf_base_target_guess.size(); ++l ) {
+      // Generate a lot of random seeds 1000 to get different final poses
+      rc = ik_solver->CartToJnt( q_comf, Tf_base_target_guess[l], qi, tol );
+      if( rc < 0 ) { ns++; continue; }
+      else {
+	m = metric_manip(qi);
+	if( m < m_min ) { m_min = m; q_m_min = qi; } 
+	if( m > m_max ) { m_max = m; q_m_max = qi; }
+      } // else
+    } // for l
+    if( m_min != 1000 && m_max != 0 ) {
+      _qs.push_back( q_m_max.data ); 
+      _P_world.push_back( P_world_targets[i] );	 
+    }
+    
+  } // for i
+}
+
+/**
+ * @function prune_reachable_voxels
+ */
+void AnalyzePoses::prune_reachable_voxels( std::vector<geometry_msgs::Point> _P_world,
+					   std::vector<unsigned int> &_indices,
+					   std::vector<Eigen::VectorXd> &_qs ) {
+  // Check with these points
+  _qs.resize(0);
+  _indices.resize(0);
+  
+  int rc; KDL::JntArray qi;
+  
+  KDL::Twist tol;
+  tol.rot = KDL::Vector(0.5,0.5,0.5);
+  tol.vel = KDL::Vector(0.005, 0.005, 0.005 );
+  
+  // Generate 3D positions to check 
+  Eigen::Vector3d P_base_target;
+  std::vector<KDL::Frame> Tf_base_target_guess;
+  
+  int ns = 0;
+  int i, j, k;
+  printf("Trying %d points \n", _P_world.size() );
+  for( i = 0; i < _P_world.size(); ++i ) {
+    
+    ros::spinOnce(); tf::Vector3 Pi_base_target;
+    Pi_base_target = this->Tf_base_world * tf::Vector3(_P_world[i].x,
+						       _P_world[i].y,
+						       _P_world[i].z );
+    P_base_target << Pi_base_target.getX(),
+      Pi_base_target.getY(),
+      Pi_base_target.getZ();
+    this->getGuess( P_base_target,
+		    Tf_base_target_guess );
+    double m_min = 1000; double m_max = 0; double m;
+    KDL::JntArray q_m_min, q_m_max;    
+    for( int l = 0; l < Tf_base_target_guess.size(); ++l ) {
+      // Generate a lot of random seeds 1000 to get different final poses
+      rc = ik_solver->CartToJnt( q_comf, Tf_base_target_guess[l], qi, tol );
+      if( rc < 0 ) { ns++; continue; }
+      else {
+	m = metric_manip(qi);
+	if( m < m_min ) { m_min = m; q_m_min = qi; } 
+	if( m > m_max ) { m_max = m; q_m_max = qi; }
+      } // else
+    } // for l
+    if( m_min != 1000 && m_max != 0 ) {
+      _qs.push_back( q_m_max.data );
+      _indices.push_back( i );
+    }
+
+  } // i
+
+  printf("Qs out size: %d \n", _qs.size() );
+}
 
 /**
  * @function generate_best_worst
@@ -369,42 +499,44 @@ bool AnalyzePoses::generate_best_worst_voxel( double _dv,
    
  // Generate 3D positions to check 
  printf("Start calculation in voxels \n");
- Eigen::Vector3d P_world_target;
- tf::Transform Tf_base_target_guess;
- printf("Lim x: %f %f \n", xyz_world_min(0), xyz_world_max(0)  );
- printf("Lim y: %f %f \n", xyz_world_min(1), xyz_world_max(1)  );
- printf("Lim z: %f %f \n", xyz_world_min(2), xyz_world_max(2)  );
+ Eigen::Vector3d P_base_target;
+ std::vector<KDL::Frame> Tf_base_target_guess;
+
  int ns = 0;
  int i, j, k;
- for( i = 0; i < (int)((xyz_world_max(0)-xyz_world_min(0))/_dv); ++i ) {
+ for( i = 0; i < (int)((xyz_base_max(0)-xyz_base_min(0))/_dv); ++i ) {
    printf("I (x) : %d \n", i );
-   for( j = 0; j < (int)((xyz_world_max(1)-xyz_world_min(1))/_dv); ++j ) {
-     for( k = 0; k < (int)((xyz_world_max(2)-xyz_world_min(2))/_dv); ++k ) {
+   for( j = 0; j < (int)((xyz_base_max(1)-xyz_base_min(1))/_dv); ++j ) {
+     for( k = 0; k < (int)((xyz_base_max(2)-xyz_base_min(2))/_dv); ++k ) {
        ros::spinOnce();
        // Generate suggestions
-       P_world_target << xyz_world_min + Eigen::Vector3d( _dv*i, _dv*j, _dv*k );
+       P_base_target << xyz_base_min + Eigen::Vector3d( _dv*i, _dv*j, _dv*k );
 
-       this->getGuess( P_world_target, Tf_base_target_guess );
-       
-       KDL::Frame fi;
-       fi.p = KDL::Vector( Tf_base_target_guess.getOrigin().getX(),
-			   Tf_base_target_guess.getOrigin().getY(),
-			   Tf_base_target_guess.getOrigin().getZ() );
-       tf::Quaternion dq = Tf_base_target_guess.getRotation();
-       fi.M = KDL::Rotation::Quaternion( dq.getAxis().getX(), dq.getAxis().getY(),
-					 dq.getAxis().getZ(), dq.getW() );
-             
-       // Generate a lot of random seeds 1000 to get different final poses
-       rc = ik_solver->CartToJnt( q_comf, fi, qi, tol );
-       if( rc < 0 ) { ns++; continue; }
-       else {
-	 _best.push_back(qi.data); //( qi.data );
-	 _worst.push_back( qi.data );
+       this->getGuess( P_base_target, Tf_base_target_guess );
+
+       double m_min = 1000; double m_max = 0; double m;
+       KDL::JntArray q_m_min, q_m_max;
+
+       for( int l = 0; l < Tf_base_target_guess.size(); ++l ) {
+	 // Generate a lot of random seeds 1000 to get different final poses
+	 rc = ik_solver->CartToJnt( q_comf, Tf_base_target_guess[l], qi, tol );
+	 if( rc < 0 ) { ns++; continue; }
+	 else {
+	   m = metric_manip(qi);
+	   if( m < m_min ) { m_min = m; q_m_min = qi; } 
+	   if( m > m_max ) { m_max = m; q_m_max = qi; }
+	 } // else
+       } // for l
+       if( m_min != 1000 && m_max != 0 ) {
+	 _best.push_back( q_m_min.data ); //( qi.data );
+	 _worst.push_back( q_m_max.data );
 	 geometry_msgs::Point p;
-	 p.x = P_world_target(0); p.y = P_world_target(1); p.z = P_world_target(2);
-	 _P_target_world.push_back( p );
-       
-	 }	 
+	 tf::Vector3 pi;
+	 pi = this->Tf_world_base * tf::Vector3(P_base_target(0), P_base_target(1), P_base_target(2) );
+	 p.x = pi.getX(); p.y = pi.getY(); p.z = pi.getZ();
+	 _P_target_world.push_back( p );	 
+       }
+     
      }  // for k
    }  // for j
  } // for i
@@ -427,11 +559,20 @@ double AnalyzePoses::metric_manip( KDL::JntArray _js ) {
   KDL::ChainJntToJacSolver jnt_to_jac_solver( chain );
   J.resize( chain.getNrOfJoints() );
   jnt_to_jac_solver.JntToJac( _js, J );
-  
+  /*  
   Eigen::MatrixXd Jm; Jm = J.data;
   Eigen::MatrixXd JJt = ( Jm*Jm.transpose() );
   double d = JJt.determinant();
   return sqrt(d);
+  */
+  Eigen::JacobiSVD<Eigen::MatrixXd> svdsolver( J.data );
+  Eigen::MatrixXd singular_values = svdsolver.singularValues();
+  
+  double error = 1.0;
+  for(unsigned int i=0; i < singular_values.rows(); ++i)
+    error *= singular_values(i,0);
+  return error;
+  
 }
 
 
@@ -453,51 +594,59 @@ KDL::JntArray AnalyzePoses::gen_random_config() {
 /**
  * @function getGuess
  */
-void AnalyzePoses::getGuess( const Eigen::Vector3d &_P_world_target,
-			     tf::Transform &_Tf_base_target_guess ) {
+void AnalyzePoses::getGuess( const Eigen::Vector3d &_P_base_target,
+			     std::vector<KDL::Frame> &_Tf_base_target_guess ) {
 
-  Eigen::Vector3d z_world_def; Eigen::Vector3d z_world_st;
-  Eigen::Vector3d y_world_def; Eigen::Vector3d y_world_st;
-  Eigen::Vector3d x_world_def; Eigen::Vector3d x_world_st;
-  Eigen::Matrix3d M_world_def; Eigen::Matrix3d M_world_st;
+  _Tf_base_target_guess.resize(0);
+	
+  Eigen::Vector3d z_base_def; Eigen::Vector3d z_base_st;
+  Eigen::Vector3d y_base_def; Eigen::Vector3d y_base_st;
+  Eigen::Vector3d x_base_def; Eigen::Vector3d x_base_st;
+  Eigen::Matrix3d M_base_def; Eigen::Matrix3d M_base_st;
   
-  // 1. Default approach direction (world frame)
-  if( is_left ) { z_world_def << 0, -1, 0; }
-  else { z_world_def << 0, 1, 0; }
-  z_world_def *= this->z_palm_direction;
+  // 1. Default approach direction (base frame)
+  if( is_left ) { z_base_def << 0,-1,0; }
+  else { z_base_def << 0, 1, 0; }
+  
+  z_base_def *= this->z_palm_direction;
   // 2. Coarse approximation (shoulder-target)
-  tf::Vector3 ws= this->Tf_world_shoulder.getOrigin();
-  z_world_st << _P_world_target(0) - ws.getX(),
-    _P_world_target(1) - ws.getY(),
-    _P_world_target(2) - ws.getZ();
-  z_world_st.normalize();
-  z_world_st *= this->z_palm_direction; 
+  tf::Vector3 bs; bs = this->Tf_base_shoulder.getOrigin();
+  z_base_st << _P_base_target(0) - bs.getX(),
+    _P_base_target(1) - bs.getY(),
+    _P_base_target(2) - bs.getZ();
+  z_base_st.normalize();
+  z_base_st *= this->z_palm_direction; 
 
   // 3. Get y as perpendicular to z and in xy plane (a,b,0)
-  y_world_def << -z_world_def(1), z_world_def(0), 0;
-  x_world_def = y_world_def.cross( z_world_def ); 
-  M_world_def.col(0) = x_world_def.transpose();
-  M_world_def.col(1) = y_world_def.transpose();
-  M_world_def.col(2) = z_world_def.transpose();
+  x_base_def << -z_base_def(1), z_base_def(0), 0;
+  y_base_def = z_base_def.cross( x_base_def ); 
+  M_base_def.col(0) = x_base_def.transpose();
+  M_base_def.col(1) = y_base_def.transpose();
+  M_base_def.col(2) = z_base_def.transpose();
   
-  y_world_st << -z_world_st(1), z_world_st(0), 0;
-  x_world_st = y_world_st.cross( z_world_st ); 
-  M_world_st.col(0) = x_world_st.transpose();
-  M_world_st.col(1) = y_world_st.transpose();
-  M_world_st.col(2) = z_world_st.transpose();
+  y_base_st << -z_base_st(1), z_base_st(0), 0;
+  x_base_st = y_base_st.cross( z_base_st ); 
+  M_base_st.col(0) = x_base_st.transpose();
+  M_base_st.col(1) = y_base_st.transpose();
+  M_base_st.col(2) = z_base_st.transpose();
   
-  Eigen::Quaterniond q_world_def( M_world_def );
-  Eigen::Quaterniond q_world_st( M_world_st );
+  Eigen::Quaterniond q_base_def( M_base_def );
+  Eigen::Quaterniond q_base_st( M_base_st );
   
   // 4. Get vector between these two
-  Eigen::Quaterniond q;
-  q = q_world_st.slerp( 0.5, q_world_def );
-  tf::Transform T_world_target;
-  T_world_target.setIdentity();
-  T_world_target.setOrigin(tf::Vector3(_P_world_target(0), _P_world_target(1), _P_world_target(2) ) );
-  T_world_target.setRotation( tf::Quaternion( q.x(), q.y(), q.z(), q.w() ) );
-  _Tf_base_target_guess = this->Tf_base_world * T_world_target; 
-  
+  Eigen::Quaterniond q; KDL::Frame fi;
+  for( int i = 0; i < 10; ++i ) {
+    ros::spinOnce();
+    q = q_base_st.slerp( 0.1*i, q_base_def );
+    tf::Transform T_base_target;
+    T_base_target.setIdentity();
+    T_base_target.setOrigin(tf::Vector3(_P_base_target(0),
+					_P_base_target(1),
+					_P_base_target(2) ) );
+    T_base_target.setRotation( tf::Quaternion( q.x(), q.y(), q.z(), q.w() ) );
+    tf::TransformTFToKDL( T_base_target, fi );    
+    _Tf_base_target_guess.push_back( fi );
+  }
 }
 
 

@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   xacro
   trac_ik_lib
   tf
+  tf_conversions
 )
 
 ## System dependencies are found with CMake's conventions
@@ -144,7 +145,7 @@ target_link_libraries( create_samples_human base_ann ${catkin_LIBRARIES} )
 
 #add_executable( analyze_poses_visually src/analyze_poses_visually.cpp src/analyze_poses.cpp )
 #target_link_libraries( analyze_poses_visually ${catkin_LIBRARIES} )
-add_library( analyze_poses src/analyze_poses.cpp src/ChainFkSolverPos_updated.cpp )
+add_library( analyze_poses src/analyze_poses.cpp src/ChainFkSolverPos_updated.cpp src/interaction.cpp )
 target_link_libraries( analyze_poses ${catkin_LIBRARIES} )
 
 add_executable( analyze_poses_interactive src/analyze_poses_interactive.cpp )
@@ -152,6 +153,9 @@ target_link_libraries( analyze_poses_interactive analyze_poses ${catkin_LIBRARIE
 
 add_executable( analyze_poses_interactive2 src/analyze_poses_interactive2.cpp )
 target_link_libraries( analyze_poses_interactive2 analyze_poses ${catkin_LIBRARIES} )
+
+add_executable( interaction_two_subjects src/interaction_two_subjects.cpp )
+target_link_libraries( interaction_two_subjects  analyze_poses ${catkin_LIBRARIES} )
 
 
 #add_dependencies(create_samples_human ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

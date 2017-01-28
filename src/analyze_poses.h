@@ -32,8 +32,8 @@ struct Robot_Data_t {
   std::string shoulder_link[2];  
   std::string tip_link[2];
   KDL::JntArray q_comf[2];
-  Eigen::Vector3d xyz_world_min[2];
-  Eigen::Vector3d xyz_world_max[2];
+  Eigen::Vector3d xyz_base_min[2];
+  Eigen::Vector3d xyz_base_max[2];
   double z_palm_direction;
   std::string world_frame;
 
@@ -65,8 +65,19 @@ class AnalyzePoses {
 				  std::vector<Eigen::VectorXd> &_best,
 				  std::vector<Eigen::VectorXd> &_worst,
 				  std::vector<geometry_msgs::Point> &_P_target_world );
+  void generate_reachable_voxels( double _dv,
+				  std::vector<Eigen::VectorXd> &_qs,
+				  std::vector<geometry_msgs::Point> &_P_world,
+				  bool _use_lim,
+				  tf::Transform _Tf_world_c,
+				  Eigen::Vector3d _xyz_c_min,
+				  Eigen::Vector3d _xyz_c_max );
+  void prune_reachable_voxels( std::vector<geometry_msgs::Point> _P_world,
+			       std::vector<unsigned int> &_indices,
+			       std::vector<Eigen::VectorXd> &_qs );
+  
   void getGuess( const Eigen::Vector3d &_P_world_target,
-		 tf::Transform &_Tf_base_target_guess );
+		 std::vector<KDL::Frame> &_Tf_base_target_guess );
   
   void get_suggestions( Eigen::Vector3d S, Eigen::Vector3d Target,
 			std::vector<Eigen::Matrix3d> &_R_hands );
@@ -99,8 +110,9 @@ class AnalyzePoses {
   std::string tip_frame;   
   std::string shoulder_frame;
 
-  Eigen::Vector3d xyz_world_min, xyz_world_max;
+  Eigen::Vector3d xyz_base_min, xyz_base_max;
   boost::thread tf_listener_t;
+
   bool run;
 };
 

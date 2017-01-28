@@ -25,8 +25,8 @@ int main( int argc, char* argv[] ) {
   ros::NodeHandle nh;
 
 
-  bool is_left = false;
-  int robot_type = SCHUNK_LWA4; //BAXTER; // HUMAN_MODEL; //SCHUNK_LWA4;
+  bool is_left = true;
+  int robot_type = HUMAN_MODEL; //BAXTER; // HUMAN_MODEL; //SCHUNK_LWA4; 
   std::string topic_in, topic_out, name;
 
   switch( robot_type ) {

@@ -2,7 +2,7 @@
 
 <!-- Load Human -->
 <param name="human_description" textfile="$(find human_moveit_config)/urdf/human.urdf" />
-<node pkg="tf" type="static_transform_publisher" name="human_bc" args="0 0 0 0 0 0 1 /world /human/base 100" />
+<node pkg="tf" type="static_transform_publisher" name="human_bc" args="0 0 0.98 0 0 0 1 /world /human/base 100" />
 
 <node name="human_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
   <remap from="robot_description" to="human_description" />
@@ -16,17 +16,20 @@
 
 
 <!-- Load Robot -->
-<!--<param name="baxter_description" textfile="$(find baxter_description)/urdf/baxter.urdf" />
-<node pkg="tf" type="static_transform_publisher" name="baxter_bc" args="2.0 -2.0 0.0 0 0 0.92 0.38 /world /base 100" />
--->
-<!-- <node name="baxter_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+<param name="baxter_description" command="$(find xacro)/xacro '$(find baxter_description)/urdf/baxter.urdf.xacro' --inorder" />
+<!--<node pkg="tf" type="static_transform_publisher" name="baxter_bc" args="1.0 -1.0 0.92 0 0 0.92 0.38 /world /base 100" /> -->
+
+<node pkg="tf" type="static_transform_publisher" name="baxter_bc" args="1.25 0.3 0.92  0 0 0.92 0.38 /world /base 100" />
+
+
+<node name="baxter_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
   <remap from="robot_description" to="baxter_description" />
   <remap from="joint_states" to="/baxter/joint_states" />
 </node>
--->
-<!--<node name="baxter_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+
+<node name="baxter_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
   <remap from="robot_description" to="baxter_description" />
-  <remap from="joint_states" to="/baxter/joint_states" />
+  <remap from="joint_states" to="/baxter/analyze_joint_states" />
 </node>
--->
+
 </launch>
