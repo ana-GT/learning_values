@@ -14,6 +14,10 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
 )
 
+find_package( PkgConfig REQUIRED )
+pkg_check_modules( FLANN flann )
+include_directories( ${FLANN_INCLUDE_DIRS} )
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -156,6 +160,9 @@ target_link_libraries( analyze_poses_interactive2 analyze_poses ${catkin_LIBRARI
 
 add_executable( interaction_two_subjects src/interaction_two_subjects.cpp )
 target_link_libraries( interaction_two_subjects  analyze_poses ${catkin_LIBRARIES} )
+
+add_executable( store_poses_base_relative src/store_poses_base_relative.cpp )
+target_link_libraries( store_poses_base_relative  analyze_poses ${catkin_LIBRARIES} )
 
 
 #add_dependencies(create_samples_human ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

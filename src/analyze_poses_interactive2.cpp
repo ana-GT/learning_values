@@ -24,9 +24,9 @@ int main( int argc, char* argv[] ) {
   ros::init( argc, argv, "analyze_interactive" );
   ros::NodeHandle nh;
 
-
+  AnalyzePoses::fill_robot_info();
   bool is_left = true;
-  int robot_type = HUMAN_MODEL; //BAXTER; // HUMAN_MODEL; //SCHUNK_LWA4; 
+  unsigned int robot_type = HUMAN_MODEL; //BAXTER; // HUMAN_MODEL; //SCHUNK_LWA4; 
   std::string topic_in, topic_out, name;
 
   switch( robot_type ) {
@@ -68,6 +68,7 @@ int main( int argc, char* argv[] ) {
   std::vector<Eigen::VectorXd> worst, best;
   std::vector<geometry_msgs::Point> target_world;
   ap.generate_best_worst_voxel( 0.10,
+				10,
 				best, worst,
 				target_world );
 

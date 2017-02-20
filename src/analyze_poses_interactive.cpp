@@ -58,6 +58,7 @@ int main( int argc, char* argv[] ) {
   std::vector<geometry_msgs::Point> target_world;
   printf("Generating sets \n");
   ap.generate_best_worst_voxel( 0.10,
+				10,
 				best, worst,
 				target_world );
   

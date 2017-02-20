@@ -21,6 +21,9 @@ public:
 			std::vector<Eigen::VectorXd> &_robot_confs,
 			std::vector<geometry_msgs::Point> &_P_world,
 			double _dv );
+  void align_improvement( const std::vector<geometry_msgs::Point> &_P_world,
+			  const std::vector<Eigen::VectorXd> &_human_confs,
+			  std::vector<Eigen::VectorXd> &_robot_confs );
   bool view_interaction( std::vector<Eigen::VectorXd> &_human_confs,
 			 std::vector<Eigen::VectorXd> &_robot_confs,
 			 std::vector<geometry_msgs::Point> &_P_world,

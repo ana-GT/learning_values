@@ -5,10 +5,13 @@
  * @function main
  */
 int main( int argc, char* argv[] ) {
-
+  printf("Initing node...\n");
   ros::init( argc, argv, "interaction" );
   ros::NodeHandle nh;
-  
+
+  printf("Fill robot info...\n");
+  AnalyzePoses::fill_robot_info();
+  printf("Finished filling robot info...\n");
   Interaction inter(&nh);
   // Load human
   printf("Set human \n");
@@ -27,7 +30,6 @@ int main( int argc, char* argv[] ) {
   inter.pub_a_bit();
   
   // Show all common points
-  printf("SHow all common...\n");
   std::vector<Eigen::VectorXd> human_confs;
   std::vector<Eigen::VectorXd> robot_confs;
   std::vector<geometry_msgs::Point> P_world;
