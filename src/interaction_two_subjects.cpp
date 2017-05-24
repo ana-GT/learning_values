@@ -1,15 +1,17 @@
-
+/**
+ * @file interaction_two_subjects.cpp
+ */
 #include "interaction.h"
 
 /**
  * @function main
  */
 int main( int argc, char* argv[] ) {
-  printf("Initing node...\n");
+  printf("Initializing node...\n");
   ros::init( argc, argv, "interaction" );
   ros::NodeHandle nh;
 
-  printf("Fill robot info...\n");
+  printf("Fill Baxter, Schunk and Human default info + training data ...\n");
   AnalyzePoses::fill_robot_info();
   printf("Finished filling robot info...\n");
   Interaction inter(&nh);
@@ -36,11 +38,15 @@ int main( int argc, char* argv[] ) {
   double dv = 0.10;
 
   printf("Get common points \n");
+  double dti; clock_t ts, tf;
+  ts = clock();
   if( !inter.getCommonPoints(human_confs, robot_confs, P_world, dv ) ) {
     printf("There are not common points! \n");
     return 0;
   }
-
+  tf = clock();
+  dti = (double)(tf-ts)/(double)CLOCKS_PER_SEC;
+  printf("Time for generating common points : %f \n", dti );
   // View
   printf("View interaction \n");
   double dt = 0.5;

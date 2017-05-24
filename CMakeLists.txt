@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   trac_ik_lib
   tf
   tf_conversions
+  interactive_markers
 )
 
 find_package( PkgConfig REQUIRED )
@@ -110,7 +111,7 @@ include_directories( ${FLANN_INCLUDE_DIRS} )
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES learning_values
-  CATKIN_DEPENDS roscpp xacro trac_ik_lib
+  CATKIN_DEPENDS roscpp xacro trac_ik_lib interactive_markers
 #  DEPENDS system_lib
 )
 
@@ -146,6 +147,9 @@ target_link_libraries( test_ann base_ann ${catkin_LIBRARIES} )
 ## Declare a C++ executable
 add_executable( create_samples_human src/create_samples_human.cpp )
 target_link_libraries( create_samples_human base_ann ${catkin_LIBRARIES} )
+
+add_executable( legible_motion_2d src/legible_motion_2d.cpp )
+target_link_libraries( legible_motion_2d ${catkin_LIBRARIES} )
 
 #add_executable( analyze_poses_visually src/analyze_poses_visually.cpp src/analyze_poses.cpp )
 #target_link_libraries( analyze_poses_visually ${catkin_LIBRARIES} )

@@ -511,7 +511,7 @@ void AnalyzePoses::prune_reachable_voxels2( std::vector<geometry_msgs::Point> _P
     double distance;
     index = AnalyzePoses::robot_info[robot_type].get_closest_P_base( P_base_target,
 								     this->side, distance );
-    printf("Index: %d %f \n", index, distance );
+    //printf("Index: %d %f \n", index, distance );
     if( distance < 0.015 ) {
       plain_indices.push_back( i );
       plain_qs.push_back( AnalyzePoses::robot_info[robot_type].qs[this->side][index] );
